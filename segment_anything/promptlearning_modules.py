@@ -1,9 +1,3 @@
-"""
-original code copy from
-Author: Mélanie Gaillochet
-Code for "Automating MedSAM by Learning Prompts with Weak Few-Shot Supervision", Gaillochet et al. (MICCAI-MedAGI, 2024),
-we simply modify the code to adopt VAE in 3D segmentation version
-"""
 import torch.nn as nn
 from torch.nn import functional as F
 import torch
