@@ -254,8 +254,8 @@ def build_model(opt):
 
 def create_model(nclass=1, ema=False):
     # Network definition
-    net = smp.Unet(encoder_name='resnext101_32x4d', encoder_weights='swsl', in_channels=1, classes=1)
-    # net = VNet(n_channels=1, n_classes=num_classes, normalization='batchnorm', has_dropout=False).cuda()
+    # net = smp.Unet(encoder_name='resnext101_32x4d', encoder_weights='swsl', in_channels=1, classes=1)
+    net = VNet(n_channels=1, n_classes=num_classes, normalization='batchnorm', has_dropout=False).cuda()
     model = net.to(device)
     if ema:
         for param in model.parameters():
