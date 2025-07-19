@@ -496,17 +496,9 @@ def self_train(pre_snapshot_path, self_snapshot_path):
                 if iter_num % 3 == 0:
                     outputs_l = model(mixl_img)
                     outputs_u = model(mixu_img)
-# try bbox
-                    predW_a, predH_a = outputs_l.max(dim=2, keepdim=True)[0], outputs_l.max(dim=3, keepdim=True)[0]
-                    predWH_l = torch.minimum(predW_a, predH_a)
-                    predW_a, predH_a = outputs_u.max(dim=2, keepdim=True)[0], outputs_u.max(dim=3, keepdim=True)[0]
-                    predWH_u = torch.minimum(predW_a, predH_a)
-                    bboxWH_u = predWH_u * img_mask + outputs_u * (1 - img_mask)
-                    bboxWH_l = outputs_l * img_mask + predWH_l * (1 - img_mask)
-                    loss_u = dice_loss(bboxWH_l, bboxl_lab, loss_mask_u)
-                    loss_l = dice_loss(bboxWH_u, bboxu_lab, loss_mask_l)
-#                     loss_u = dice_loss(outputs_u, mixu_lab, loss_mask_u)
-#                     loss_l = dice_loss(outputs_l, mixl_lab, loss_mask_l)
+
+                    loss_u = dice_loss(outputs_u, mixu_lab, loss_mask_u)
+                    loss_l = dice_loss(outputs_l, mixl_lab, loss_mask_l)
                     outputs_sam_l, kl_loss1 = finetune_model_predict3D(mixl_img, 2, sam_model_tune, device=device)
                     outputs_sam_u, kl_loss2 = finetune_model_predict3D(mixu_img, 2, sam_model_tune, device=device)
 
@@ -529,16 +521,8 @@ def self_train(pre_snapshot_path, self_snapshot_path):
                     outputs_l = model(mixl_img)
                     outputs_u = model(mixu_img)
 
-                    predW_a, predH_a = outputs_l.max(dim=2, keepdim=True)[0], outputs_l.max(dim=3, keepdim=True)[0]
-                    predWH_l = torch.minimum(predW_a, predH_a)
-                    predW_a, predH_a = outputs_u.max(dim=2, keepdim=True)[0], outputs_u.max(dim=3, keepdim=True)[0]
-                    predWH_u = torch.minimum(predW_a, predH_a)
-                    bboxWH_u = predWH_u * img_mask + outputs_u * (1 - img_mask)
-                    bboxWH_l = outputs_l * img_mask + predWH_l * (1 - img_mask)
-                    loss_u = dice_loss(bboxWH_l, bboxl_lab, loss_mask_u)
-                    loss_l = dice_loss(bboxWH_u, bboxu_lab, loss_mask_l)
-                    # loss_u = dice_loss(outputs_u, mixu_lab, loss_mask_u)
-                    # loss_l = dice_loss(outputs_l, mixl_lab, loss_mask_l)
+                    loss_u = dice_loss(outputs_u, mixu_lab, loss_mask_u)
+                    loss_l = dice_loss(outputs_l, mixl_lab, loss_mask_l)
                     outputs_sam_l_, kl_loss1 = finetune_model_predict3D(mixl_img, 2, sam_model_tune2, device=device)
                     outputs_sam_u_, kl_loss2 = finetune_model_predict3D(mixu_img, 2, sam_model_tune2, device=device)
 
