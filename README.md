@@ -1,5 +1,5 @@
 # Semi-CycleSAM
 The test code and pre-training weights will be available after paper acceptance.
 <div align="center">
-  <img src="https://github.com/dhhdy/Semi-CycleSAM/blob/main/fig2.pdf">
+  <img src="https://github.com/dhhdy/Semi-CycleSAM/blob/main/framwork.png">
 </div>
