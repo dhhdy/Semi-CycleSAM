@@ -103,9 +103,7 @@ class LoRA_Sam3D(nn.Module):
         self.w_As = nn.ModuleList()
         self.w_Bs = nn.ModuleList()
 
-        # self.auto_prompt = promptmodule_zoo["mul_exp_UNet_VAE_dn3_PARA"]()
         self.auto_prompt = promptmodule_zoo["mul_exp_UNet_VAE_dn3"]()
-        # self.auto_prompt = promptmodule_zoo["UNet_VAE_dn3"]()
         for param in sam_model.parameters():
             param.requires_grad = False
 
