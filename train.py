@@ -20,6 +20,7 @@ from utils import ramps, losses
 from dataloaders.la_heart import LAHeart, RandomCrop, CenterCrop, RandomRotFlip, ToTensor, TwoStreamBatchSampler
 from utils.loss import KDLoss
 from skimage.measure import label
+from networks.vnet import VNet
 from segment_anything.build_sam3D import sam_model_registry3D
 from LoRA_SAM import LoRA_Sam3D
 from torch.cuda.amp import autocast
