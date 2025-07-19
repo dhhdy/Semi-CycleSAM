@@ -216,7 +216,7 @@ def context_mask(img, img_a, model, mask_ratio=2/3):
     mask = torch.ones((img_x, img_y, img_z), dtype=torch.float16).cuda()
     patch_pixel_x, patch_pixel_y, patch_pixel_z = int(img_x*mask_ratio), int(img_y*mask_ratio), int(img_z*mask_ratio)
 
-    # 对uimg使用蒙特卡罗dropout mean均值损失权重 var不确定性方差
+    # 对uimg使用蒙特卡罗dropout 计算var不确定性方差
     w,h,z = get_max_var_area(img, model, patch_pixel_x, patch_pixel_y, patch_pixel_z)
     mask[w:w+patch_pixel_x, h:h+patch_pixel_y, z:z+patch_pixel_z] = 0
     loss_mask[:, w:w+patch_pixel_x, h:h+patch_pixel_y, z:z+patch_pixel_z] = 0
