@@ -152,7 +152,6 @@ def to_one_hot(tensor, nClasses):
 def dice_loss(predict, target, weight=None, epsilon=1e-5):
     # predict = predict[:,0,:,:,:]
     num = predict.size(0)
-    # pred不需要转bool变量，如https://github.com/yassouali/pytorch-segmentation/blob/master/utils/losses.py#L44
     # soft dice loss, 直接使用预测概率而不是使用阈值或将它们转换为二进制mask
     pred = torch.sigmoid(predict)
     pred = torch.cat([1-pred, pred], dim=1).view(num, 2, -1)
