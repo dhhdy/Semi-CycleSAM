@@ -1,7 +1,3 @@
-"""
-This file is adapted from https://github.com/ozan-oktay/Attention-Gated-Networks
-"""
-
 import math
 import torch
 import torch.nn as nn
