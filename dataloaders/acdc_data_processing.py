@@ -6,7 +6,6 @@ import numpy as np
 import SimpleITK as sitk
 
 slice_num = 0
-mask_path = sorted(glob.glob("/home/xdluo/data/ACDC/image/*.nii.gz"))
 for case in mask_path:
     img_itk = sitk.ReadImage(case)
     origin = img_itk.GetOrigin()
@@ -27,7 +26,6 @@ for case in mask_path:
         print(item)
         for slice_ind in range(image.shape[0]):
             f = h5py.File(
-                '/home/xdluo/data/ACDC/data/{}_slice_{}.h5'.format(item, slice_ind), 'w')
             f.create_dataset(
                 'image', data=image[slice_ind], compression="gzip")
             f.create_dataset('label', data=mask[slice_ind], compression="gzip")
