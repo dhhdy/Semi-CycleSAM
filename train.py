@@ -348,7 +348,7 @@ def pre_train(args, snapshot_path):
                 loss_sam_dice = dice_loss(samseg_mask, label_batch) + dice_loss(samseg_mask2, label_batch)
                 loss_dice = dice_loss(outputs, label_batch)
                 loss1 = loss_dice
-                loss2 = loss_sam_dice + 0.1 * kl_loss + 0.1 * kl_loss2
+                loss2 = loss_sam_dice + kl_loss + kl_loss2
                 iter_num += 1
                 total_loss = (loss1 + loss2) / iters_to_accumulate
             scaler.scale(total_loss).backward()
