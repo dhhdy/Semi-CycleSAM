@@ -537,7 +537,7 @@ def self_train(pre_snapshot_path, self_snapshot_path):
                     sam_consistency = rkd_loss(outputs_l, outputs_sam_l_.clone().detach()) + rkd_loss(outputs_u, outputs_sam_u_.clone().detach())
                     sam_con_loss = sam_consistency
                     loss = loss_u + loss_l + sam_con_loss
-                    loss_sam = loss_sam_l + loss_sam_u + 0.1 * kl_loss1 + 0.1 * kl_loss2
+                    loss_sam = loss_sam_l + loss_sam_u + kl_loss1 + kl_loss2
                     total_loss = loss + loss_sam
 
                 else:
@@ -549,9 +549,9 @@ def self_train(pre_snapshot_path, self_snapshot_path):
 
                     sam_con_loss = loss_diff(outputs_sam_l, outputs_sam_l_.clone().detach()) + loss_diff(outputs_sam_u, outputs_sam_u_.clone().detach())+\
                                    loss_diff(outputs_sam_l_, outputs_sam_l.clone().detach()) + loss_diff(outputs_sam_u_, outputs_sam_u.clone().detach())
-                    beta = get_current_consistency_weight(epoch_num)
+                    
                     # print(epoch_num, beta)
-                    total_loss = (beta*sam_con_loss + 0.1*(kl_loss1+kl_loss1_+kl_loss2+kl_loss2_))
+                    total_loss = sam_con_loss + kl_loss1+kl_loss1_+kl_loss2+kl_loss2_
 
             scaler.scale(total_loss).backward()
 
