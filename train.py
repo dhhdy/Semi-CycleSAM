@@ -510,7 +510,7 @@ def self_train(pre_snapshot_path, self_snapshot_path):
                     sam_consistency = rkd_loss(outputs_l, outputs_sam_l.clone().detach()) + rkd_loss(outputs_u, outputs_sam_u.clone().detach())
                     sam_con_loss = sam_consistency
                     loss = loss_u + loss_l + sam_con_loss
-                    loss_sam = loss_sam_l + loss_sam_u + 0.1 * kl_loss1 + 0.1 * kl_loss2
+                    loss_sam = loss_sam_l + loss_sam_u + kl_loss1 + kl_loss2
                     total_loss = loss + loss_sam
 
                 #sam2
