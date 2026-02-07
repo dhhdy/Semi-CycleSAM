@@ -247,7 +247,7 @@ def build_model(opt):
 
 def create_model(nclass=1, ema=False):
     # Network definition
-    net = smp.Unet(encoder_name='resnext101_32x4d', encoder_weights='swsl', in_channels=1, classes=1)
+    net = unet_3D(in_channels=1, classes=1)
     model = net.to(device)
     if ema:
         for param in model.parameters():
