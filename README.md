@@ -10,4 +10,4 @@ The code is only for research purposes. If you have any questions regarding how 
 # Requirements
 
 # Acknowledgments
-The code is mainly adapted from .
+The code is mainly adapted from [SemiSAM](https://github.com/YichiZhang98/SemiSAM).
