@@ -5,7 +5,7 @@ We pioneer the investigation of existing limitations in SAM-based SSMIS framewor
 <div align="center">
   <img src="https://github.com/dhhdy/Semi-CycleSAM/blob/main/framework.png">
 </div>
-The code is only for research purposes. If you have any questions regarding how to use this code, feel free to contact us (hongxiangpeng2001@163.com).
+The code is only for research purposes. If you have any questions regarding how to use this code, feel free to contact us (mailto:hongxiangpeng2001@163.com).
 
 # Requirements
 * Python==3.10.16
