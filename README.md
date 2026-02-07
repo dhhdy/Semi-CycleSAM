@@ -11,7 +11,7 @@ The code is only for research purposes. If you have any questions regarding how 
 * Python==3.10.16
 * torch==1.13.0
 * torchvision==0.14.0
-* numpy
+* numpy==1.26.4
 * opencv-python
 * tqdm
 * scikit-image
