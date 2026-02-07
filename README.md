@@ -10,4 +10,4 @@ The code is only for research purposes. If you have any questions regarding how 
 # Requirements
 
 # Acknowledgments
-The code is mainly adapted from [UA-MT](https://github.com/yulequan/UA-MT), [SSL4MIS](https://github.com/HiLab-git/SSL4MIS/tree/master/data/BraTS2019), [SemiSAM](https://github.com/YichiZhang98/SemiSAM) and [SAM-Med3D]. We thank all the authors for their contribution.
+The code is mainly adapted from [UA-MT](https://github.com/yulequan/UA-MT), [SSL4MIS](https://github.com/HiLab-git/SSL4MIS/tree/master/data/BraTS2019), [SemiSAM](https://github.com/YichiZhang98/SemiSAM) and [SAM-Med3D](https://github.com/uni-medical/SAM-Med3D). We thank all the authors for their contribution.
