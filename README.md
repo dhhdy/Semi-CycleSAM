@@ -11,15 +11,13 @@ The code is only for research purposes. If you have any questions regarding how 
 * Python==3.10.6
 * torch==1.12.1
 * torchvision==0.15.2
-*numpy
-*opencv-python
-*tqdm
-*tensorboard
-*tensorboardX
-*scikit-image
-*medpy
-*pillow
-*scipy
+* numpy
+* opencv-python
+* tqdm
+* scikit-image
+* medpy
+* pillow
+* scipy
 
 # Acknowledgments
 The code is mainly adapted from [UA-MT](https://github.com/yulequan/UA-MT), [SSL4MIS](https://github.com/HiLab-git/SSL4MIS), [SemiSAM](https://github.com/YichiZhang98/SemiSAM) and [SAM-Med3D](https://github.com/uni-medical/SAM-Med3D). We thank all the authors for their contribution.
