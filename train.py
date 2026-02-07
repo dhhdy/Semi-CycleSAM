@@ -247,7 +247,7 @@ def build_model(opt):
 
 def create_model(nclass=1, ema=False):
     # Network definition
-    net = unet_3D(in_channels=1, classes=1)
+    net = unet_3D(n_classes=1, in_channels=1)
     model = net.to(device)
     if ema:
         for param in model.parameters():
