@@ -20,7 +20,7 @@ from utils import ramps, losses
 from dataloaders.la_heart import LAHeart, RandomCrop, CenterCrop, RandomRotFlip, ToTensor, TwoStreamBatchSampler
 from utils.loss import KDLoss
 from skimage.measure import label
-from networks.vnet import VNet
+from networks.unet_3D import unet_3D
 from segment_anything.build_sam3D import sam_model_registry3D
 from LoRA_SAM import LoRA_Sam3D
 from torch.cuda.amp import autocast
@@ -32,7 +32,7 @@ parser.add_argument('--root_path', type=str, default='/data1/data/LA/2018LA_Seg_
 # parser.add_argument('--root_path', type=str, default='/data1/data/GD_master/h5/', help='Name of Experiment')
 # parser.add_argument('--root_path', type=str, default='/data1/data/BraTS2019/BraTS2019/data/', help='BraTS2019')
 parser.add_argument('--exp', type=str,  default='mySAM', help='model_name')
-parser.add_argument('--model', type=str,  default='VNet', help='model_name')
+parser.add_argument('--model', type=str,  default='UNet', help='model_name')
 parser.add_argument('--max_iterations', type=int,  default=20000, help='maximum epoch number to train')
 parser.add_argument('--pre_max_iteration', type=int,  default=10000, help='maximum pre-train iteration to train')
 parser.add_argument('--batch_size', type=int, default=4, help='batch_size per gpu')
@@ -101,7 +101,7 @@ def mse_loss(input1, input2):
     input2 = torch.sigmoid(input2)
     return torch.mean((input1 - input2)**2)
 
-def get_cut_mask_VNet(out, nms=0):
+def get_cut_mask_UNet(out, nms=0):
     probs = torch.sigmoid(out)[:,0,:,:,:] # one class
     masks = (probs > 0.5)
     masks = masks.contiguous()
@@ -125,9 +125,9 @@ def loss_diff(u_prediction_1, u_prediction_2):
 
 def entropy_loss(p):
     # p N*C*W*H*D
-    p = torch.sigmoid(p)  # 输出形状: [N, 1, W, H, D]
+    p = torch.sigmoid(p)  # [N, 1, W, H, D]
 
-    # 计算二元熵: -p*log(p) - (1-p)*log(1-p)
+    # -p*log(p) - (1-p)*log(1-p)
     entropy = -p * torch.log(p + 1e-6) - (1 - p) * torch.log(1 - p + 1e-6)
     return torch.mean(entropy)
 
@@ -152,7 +152,6 @@ def to_one_hot(tensor, nClasses):
 def dice_loss(predict, target, weight=None, epsilon=1e-5):
     # predict = predict[:,0,:,:,:]
     num = predict.size(0)
-    # soft dice loss, 直接使用预测概率而不是使用阈值或将它们转换为二进制mask
     pred = torch.sigmoid(predict)
     pred = torch.cat([1-pred, pred], dim=1).view(num, 2, -1)
     targ = target.view(num, 1, -1)
@@ -187,8 +186,6 @@ def get_max_var_area(img, model, x, y, z, T=10):
     var_a = var_a / (var_a.max() + 1)
     var_3d = var_a[0]  # 假设var_a的形状为 (1, 1, 128, 128, 128)
     s = var_3d.cumsum(dim=0).cumsum(dim=1).cumsum(dim=2)
-    # 计算所有可能的立方体和
-    # 切片处理，确保不越界
     if x > 0 and y > 0 and z > 0 and s.shape[0] >= x and s.shape[1] >= y and s.shape[2] >= z:
         val = (
                 s[x:, y:, z:]
@@ -200,10 +197,8 @@ def get_max_var_area(img, model, x, y, z, T=10):
                 + s[x:, :-y, :-z]
                 - s[:-x, :-y, :-z]
         )
-        # 找到最大值及其索引
         if val.numel() > 0:
             max_val, flat_idx = torch.max(val.view(-1), dim=0)
-            # (i,j,k)为左上角的最大和
             i, j, k = np.unravel_index(flat_idx.cpu().numpy(), val.shape)
             xx,yy,zz=i,j,k
     return xx,yy,zz
@@ -214,8 +209,6 @@ def context_mask(img, img_a, model, mask_ratio=2/3):
     loss_mask = torch.ones((batch_size, img_x, img_y, img_z), dtype=torch.float16).cuda()
     mask = torch.ones((img_x, img_y, img_z), dtype=torch.float16).cuda()
     patch_pixel_x, patch_pixel_y, patch_pixel_z = int(img_x*mask_ratio), int(img_y*mask_ratio), int(img_z*mask_ratio)
-
-    # 对uimg使用蒙特卡罗dropout 计算var不确定性方差
     w,h,z = get_max_var_area(img, model, patch_pixel_x, patch_pixel_y, patch_pixel_z)
     mask[w:w+patch_pixel_x, h:h+patch_pixel_y, z:z+patch_pixel_z] = 0
     loss_mask[:, w:w+patch_pixel_x, h:h+patch_pixel_y, z:z+patch_pixel_z] = 0
@@ -475,8 +468,8 @@ def self_train(pre_snapshot_path, self_snapshot_path):
                 with torch.no_grad():  # create plabel
                     prev_label1_a = ema_model(unimg_a)
                     prev_label1_b = ema_model(unimg_b)
-                    plab_a = get_cut_mask_VNet(prev_label1_a, nms=0)  # 伪标签ab
-                    plab_b = get_cut_mask_VNet(prev_label1_b, nms=0)
+                    plab_a = get_cut_mask_UNet(prev_label1_a, nms=0)  
+                    plab_b = get_cut_mask_UNet(prev_label1_b, nms=0)
                     predW_a, predH_a = plab_a.max(dim=1, keepdim=True)[0], plab_a.max(dim=2, keepdim=True)[0]
                     bboxWH_a = torch.minimum(predW_a, predH_a)
                     predW_b, predH_b = plab_b.max(dim=1, keepdim=True)[0], plab_b.max(dim=2, keepdim=True)[0]
@@ -611,7 +604,7 @@ def self_train(pre_snapshot_path, self_snapshot_path):
                 if dice_sample > best_dice1:
                     best_dice1 = round(dice_sample, 4)
                     save_mode_path = os.path.join(self_snapshot_path,  'iter_{}.pth'.format(iter_num))
-                    save_best_path = os.path.join(self_snapshot_path,'VNet_best_model.pth')
+                    save_best_path = os.path.join(self_snapshot_path,'UNet_best_model.pth')
                     torch.save(model.state_dict(), save_best_path)
 
                     logging.info("best dice {}, save best model to {}".format(best_dice1, save_mode_path))
