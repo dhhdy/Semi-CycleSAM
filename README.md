@@ -8,15 +8,16 @@ We pioneer the investigation of existing limitations in SAM-based SSMIS framewor
 The code is only for research purposes. If you have any questions regarding how to use this code, feel free to contact us (hongxiangpeng2001@163.com).
 
 # Requirements
-* Python==3.10.6
-* torch==1.12.1
-* torchvision==0.15.2
+* Python==3.10.16
+* torch==1.13.0
+* torchvision==0.14.0
 * numpy
 * opencv-python
 * tqdm
 * scikit-image
 * medpy
 * pillow
+* h5py
 * scipy
 
 # Acknowledgments
